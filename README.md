@@ -1,9 +1,54 @@
-# Deployment und Handling von Applikationen mit Kubernetes, Helm, Prometheus und Gitlab
+# Kubernetes Praxis für Cloud Architekten
 
 ## Agenda 
+
+  1. Einführung Container-Architektur
+     * [Warum Kubernetes?](/kubernetes/architecture.md)
+	   * [Kubernetes-Cluster-Architektur]()
+
+  1. Kubernetes Komponenten & Objekte (Teil 1) 
+     * [Pods - by example](/kubectl-examples/01-pod-nginx.md)
+     * [ReplicaSets - by example]()
+	   * [Deployments - by example]()
+	   * [Services - by example]()
+	   * Jobs
+	   * DaemonSets
+  
+  1. Kubernetes Komponenten (Teil 2: Der Klebstoff) 
+     * [Labels and Annotations]()
+	
+  1. Kubernetes Komponenten (Teil 3: Arbeiten mit Konfigurationen)
+     * [Config Maps]()
+     * [Secrets]()
+     * [SealedSecrets]()
+  
+  1. Anwendungen (Teil 1: Allgemein)
+     * Anwendungsskalierung & Load Balancing
+     * Rolling Updates
+     * Service Discovery 
+     * Volumes & Storage
+
+  1. Anwendungen (Teil 2: Network and Container-Security) 
+     * Network Security 
+     * Container Security 
+
+  1. Infrastructure as Code (IaC) 
+     * Kubernetes Configuration Files 
+     * Helm Package Manager  
+
+  1. CI/CD (Überblick) 
+
+  1. Monitoring and Logging
+     * Prometheus & Grafana
+
+	1. Wrap-up, Q&A und Ausblick
+	   * Muss es immer Kubernetes sein?
+	   * Was ist Kuberentes und was ist OpenShift 
+     * Function as a Service
+
+## Backlog 
   
   1. Kubernetes (Refresher) 
-     * [Aufbau von Kubernetes](kubernetes/architecture.md) 
      * Kubernetes und seine Objekte (pods, replicasets, deployments, services, ingress) 
      * Verbinde mit kubectl 
      * Manifeste ausrollen (im Namespace) (2-3)
