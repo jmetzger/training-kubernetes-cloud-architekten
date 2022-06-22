@@ -4,15 +4,15 @@
 
   1. Einführung Container-Architektur
      * [Warum Kubernetes?](/kubernetes/architecture.md)
-	   * [Kubernetes-Cluster-Architektur]()
+     * [Kubernetes-Cluster-Architektur]()
 
   1. Kubernetes Komponenten & Objekte (Teil 1) 
      * [Pods - by example](/kubectl-examples/01-pod-nginx.md)
      * [ReplicaSets - by example]()
-	   * [Deployments - by example]()
-	   * [Services - by example]()
-	   * Jobs
-	   * DaemonSets
+     * [Deployments - by example]()
+     * [Services - by example]()
+     * Jobs
+     * DaemonSets
   
   1. Kubernetes Komponenten (Teil 2: Der Klebstoff) 
      * [Labels and Annotations]()
@@ -41,9 +41,9 @@
   1. Monitoring and Logging
      * Prometheus & Grafana
 
-	1. Wrap-up, Q&A und Ausblick
-	   * Muss es immer Kubernetes sein?
-	   * Was ist Kuberentes und was ist OpenShift 
+  1. Wrap-up, Q&A und Ausblick
+     * Muss es immer Kubernetes sein?
+     * Was ist Kuberentes und was ist OpenShift 
      * Function as a Service
 
 ## Backlog 
