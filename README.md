@@ -3,8 +3,8 @@
 ## Agenda 
 
   1. Einführung Container-Architektur
-     * [Warum Kubernetes?](/kubernetes/architecture.md)
-     * [Kubernetes-Cluster-Architektur]()
+     * [Warum Kubernetes?](warum-kubernetes.md)
+     * [Kubernetes-Cluster-Architektur](/kubernetes/architecture.md))
      * [OpenShift 4 vs. Kubernetes (Vanilla)](/kubernetes/openshift4-vs-kubernetes.md)
 
   1. Installation
