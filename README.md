@@ -4,7 +4,7 @@
 
   1. Einführung Container-Architektur
      * [Warum Kubernetes?](warum-kubernetes.md)
-     * [Kubernetes-Cluster-Architektur](/kubernetes/architecture.md))
+     * [Kubernetes-Cluster-Architektur](/kubernetes/architecture.md)
      * [OpenShift 4 vs. Kubernetes (Vanilla)](/kubernetes/openshift4-vs-kubernetes.md)
 
   1. Installation
@@ -19,7 +19,7 @@
      * [Pods - by example](/kubectl-examples/01-pod-nginx.md)
      * [ReplicaSets - by example](/kubectl-examples/01a-replicaset-nginx.md)
      * [Deployments - by example](/kubectl-examples/03-nginx-deployment.md)
-     * [Services - by example]()
+     * [Services - by example](/kubectl-examples/03b-service.md)
      * Jobs
      * DaemonSets
   
