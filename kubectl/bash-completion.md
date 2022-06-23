@@ -3,6 +3,10 @@
 ## Walkthrough 
 
 ```
+sudo su - 
+```
+
+```
 apt install bash-completion
 source /usr/share/bash-completion/bash_completion
 # is it installed properly 
