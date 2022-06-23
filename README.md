@@ -12,6 +12,7 @@
      
   1. kubectl 
      * [Spickzettel](/kubectl/spickzettel.md)
+     * [bash completion](/kubectl/bash-completion.md)
 
 
   1. Kubernetes Komponenten & Objekte (Teil 1) 
