@@ -162,6 +162,7 @@ kubectl logs -f <container>
 ## Debugging hochsetzen für kubectl 
 
 ```
+# höchstes Loglevel 9 
 kubectl -v=8 get pods nginx-static-web -o jsonpath='{.metadata.namespace}'
 ```
 
