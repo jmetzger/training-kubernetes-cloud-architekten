@@ -115,6 +115,11 @@ kubectl delete pod nginx
 # Kommando in pod ausführen 
 kubectl exec -it nginx -- bash 
 
+# Pod erstellen (on the fly) on direkt Kommando ausführen 
+kubectl run busybox --rm -it --image busybox /bin/sh
+# das geht auch 
+kubectl run busybox --rm -it --image busybox
+
 ```
 
 ## Arbeiten mit namespaces 
