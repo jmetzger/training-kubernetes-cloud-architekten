@@ -31,6 +31,9 @@
      * [Secrets]()
      * [SealedSecrets]()
   
+  1. Ingress 
+     * [Überblock Ingress](/kubernetes/ingress.md)
+  
   1. Anwendungen (Teil 1: Allgemein)
      * Anwendungsskalierung & Load Balancing
      * Rolling Updates
