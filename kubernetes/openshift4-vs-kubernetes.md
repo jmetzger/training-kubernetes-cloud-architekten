@@ -54,4 +54,9 @@
     * Flannel (keinerlei Einschränkungen) - keine Firewall 
     * Callico (Firewall-Regeln festzulegen -> NetworkPolicies)  
 
+## Detail. Operator
+
+  * OpenShift 4. OpenShift 4 arbeitet sehr viel mit Operatoren 
+    * Weil alles was nicht Operator Vanilla ist, über Operator dargestellt werden muss.
+  * Da Kubernetes out of the box mit weniger Objekten bereits funktioniert, kommen hier per se weniger Operatoren zum Einsatz 
 
