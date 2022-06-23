@@ -70,6 +70,9 @@ kubectl get pods -o wide # weitere informationen
 # im json format
 kubectl get pods -o json 
 
+# spezielle Eigenschaften zurückgeben 
+kubectl get pods nginx-static-web -o jsonpath='{.metadata.namespace}'
+
 # gilt natürluch auch für andere kommandos
 kubectl get deploy -o json 
 kubectl get deploy -o yaml 
@@ -156,7 +159,11 @@ kubectl logs --timestamp -n namespace8 deploy/nginx
 kubectl logs -f <container>
 ```
 
+## Debugging hochsetzen für kubectl 
 
+```
+kubectl -v=8 get pods nginx-static-web -o jsonpath='{.metadata.namespace}'
+```
 
 ## Referenz
 
