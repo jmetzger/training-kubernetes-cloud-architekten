@@ -13,6 +13,7 @@
   * k3d (Wrapper k3s) 
   * Rancher (GUI) / Rancher-Desktop (nur für dev lokal) - Distri ? 
   * minkube (Linux, OSX, Windows (Virtualisierung zB HyperV)
+  * kubeadm 
 
 ## Detail: Welches Betriebssystem kann verwendet werden
   * Kubernetes: Jedes Linux OS
@@ -35,4 +36,22 @@
 
   * oc ist eine Erweiterung von kubectl 
   * Es beherrscht die gleichen Kommandos und noch zusätzliche 
+
+## oc - Vorteile 
+  
+  * Einfacher sich einzulogen
+  * kubernetes kennt keine Projekte (aber auch namespaces) 
+
+## oc - Routen 
+
+  * Gibt es nicht in Kubernetes
+  * Alternative ist der/die Ingress Controller 
+
+## Netzwerk 
+
+  * OpenShift Plugin: MultiTenancy zum Unterbinden von Inter-Namespace-Traffic (kein Traffic zwischen Namespaces) 
+  * Kubernetes: 
+    * Flannel (keinerlei Einschränkungen) - keine Firewall 
+    * Callico (Firewall-Regeln festzulegen -> NetworkPolicies)  
+
 
