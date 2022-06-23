@@ -10,6 +10,7 @@
 
   * microk8s (Kommandozeile) - snap - unter Ubuntu standardmäßig snapd eingerichtet 
   * k3s (kommandozeile) - Einschränkung Prozessor-Architektur (M1 wahrscheinlich nicht wirklich gut) 
+  * k3d (Wrapper k3s) 
   * Rancher (GUI) / Rancher-Desktop (nur für dev lokal) - Distri ? 
   * minkube (Linux, OSX, Windows (Virtualisierung zB HyperV)
 
