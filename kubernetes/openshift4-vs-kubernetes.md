@@ -4,6 +4,14 @@
 
   * Die Entwickler von OpenShift 4 bezeichnen Kubernetes gerne als KERNEL, den Kern des Systems. 
   * Um diesen Kern gibt es entsprechende Erweiterungen, die sich an Kubernetes anlehnen 
+  * OpenShift 4 eine Kubernetes Distribution 
+
+## Was gibt es für Installer für Kubernetes 
+
+  * microk8s (Kommandozeile) - snap - unter Ubuntu standardmäßig snapd eingerichtet 
+  * k3s (kommandozeile) - Einschränkung Prozessor-Architektur (M1 wahrscheinlich nicht wirklich gut) 
+  * Rancher (GUI) / Rancher-Desktop (nur für dev lokal) - Distri ? 
+  * minkube (Linux, OSX, Windows (Virtualisierung zB HyperV)
 
 ## Detail: Welches Betriebssystem kann verwendet werden
   * Kubernetes: Jedes Linux OS
