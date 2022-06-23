@@ -59,6 +59,9 @@ kubectl apply -f nginx-replicaset.yml
 # Alle Objekte aus manifest löschen
 kubectl delete -f nginx-replicaset.yml 
 
+# Alle objekte im Verzeichnissen und allen Unterverzeichnissen löschen
+# auf Basis der vorliegenden Manifeste 
+kubectl delete -f . -R 
 
 ```
 
