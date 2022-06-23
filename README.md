@@ -17,7 +17,7 @@
   1. Kubernetes Komponenten & Objekte (Teil 1) 
      * [Pods - by example](/kubectl-examples/01-pod-nginx.md)
      * [ReplicaSets - by example](/kubectl-examples/01a-replicaset-nginx.md)
-     * [Deployments - by example]()
+     * [Deployments - by example](/kubectl-examples/03-nginx-deployment.md)
      * [Services - by example]()
      * Jobs
      * DaemonSets
