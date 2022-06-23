@@ -10,7 +10,9 @@ type _init_completion
 
 # activate for all users 
 kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
+```
 
+```
 # verifizieren - neue login shell
 su -
 
