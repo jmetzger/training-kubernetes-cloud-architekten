@@ -10,6 +10,9 @@
   1. Installation
      * [Client (Windows)](/kubernetes/installation-client-windows.md)
      
+  1. kubectl 
+     * [Spickzettel](/kubectl/spickzettel.md)
+
 
   1. Kubernetes Komponenten & Objekte (Teil 1) 
      * [Pods - by example](/kubectl-examples/01-pod-nginx.md)
