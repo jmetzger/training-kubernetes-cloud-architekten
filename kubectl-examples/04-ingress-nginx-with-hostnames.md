@@ -92,7 +92,7 @@ metadata:
     ingress.kubernetes.io/rewrite-target: /
     # with the ingress controller from helm, you need to set an annotation 
     # otherwice it does not know, which controller to use
-    kubernetes.io/ingress.class: nginx 
+    kubernetes.io/ingress.class: nginx
 spec:
   rules:
   - host: "jochen.lab2.t3isp.de"
