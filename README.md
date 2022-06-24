@@ -31,7 +31,7 @@
      * [Secrets]()
   
   1. Ingress 
-     * [Überblock Ingress](/kubernetes/ingress.md)
+     * [Übersicht Ingress](/kubernetes/ingress.md)
      * [Ingress Controller auf DigitalOcean aufsetzen](/digitalocean/ingress-controller-aufsetzen-mit-helm.md)
      * [Übung/Beispiel Ingress]()
   
