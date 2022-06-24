@@ -3,7 +3,7 @@
 ## Basics 
 
   * Das Verfahren funktioniert auch so auf anderen Plattformen, wenn helm verwendet wird und noch kein IngressController vorhanden
-  * Ist kein IngressController vorhanden, werden die Objekte zwar angelegt, es funktioniert aber nicht. 
+  * Ist kein IngressController vorhanden, werden die Ingress-Objekte zwar angelegt, es funktioniert aber nicht. 
 
 ## Prerequisites 
 
