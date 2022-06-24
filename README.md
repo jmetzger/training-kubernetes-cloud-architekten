@@ -72,9 +72,11 @@
      * Muss es immer Kubernetes sein?
      * Was ist Kuberentes und was ist OpenShift 
      * Function as a Service
-     
-  1. Tipps & Tricks 
+    
+    
+  1. Doku / Tipps & Tricks 
      * [alte Manifeste migrieren](kubectl/convert-plugin.md)
+     * [Cluster - AWS einrichten](aws/aws.md)
 
 ## Backlog 
   
