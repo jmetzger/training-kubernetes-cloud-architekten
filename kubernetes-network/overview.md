@@ -59,6 +59,10 @@
 ### Referenz 
   * https://projectcalico.docs.tigera.io/security/calico-network-policy
 
+## Cilium 
+
+  * Vergleich zu Calico https://www.inovex.de/de/blog/kubernetes-networking-2-calico-cilium-weavenet/
+
 ## microk8s Vergleich 
 
   * https://microk8s.io/compare
