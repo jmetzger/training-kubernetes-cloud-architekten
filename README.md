@@ -35,6 +35,12 @@
      * [Ingress Controller auf DigitalOcean aufsetzen](/digitalocean/ingress-controller-aufsetzen-mit-helm.md)
      * [Übung/Beispiel Ingress]()
   
+  1. Kubernetes Paketmanagement (Helm) 
+     * [Warum ? (Dev/Ops)](/helm/warum.md)
+     * [Grundlagen / Aufbau / Verwendung (Dev/Ops)](/helm/grundlagen.md)
+     * [Helm - wichtige Befehle](/helm/befehle.md)
+     * [Praktisches Beispiel bitnami/mysql (Dev/Ops)](/helm/example.md)
+  
   1. Anwendungen (Teil 1: Allgemein)
      * Anwendungsskalierung & Load Balancing
      * Rolling Updates
