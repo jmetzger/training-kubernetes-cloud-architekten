@@ -29,10 +29,11 @@
   1. Kubernetes Komponenten (Teil 3: Arbeiten mit Konfigurationen)
      * [Config Maps]()
      * [Secrets]()
-     * [SealedSecrets]()
   
   1. Ingress 
      * [Überblock Ingress](/kubernetes/ingress.md)
+     * [Ingress Controller auf DigitalOcean aufsetzen](/digitalocean/ingress-controller-aufsetzen-mit-helm.md)
+     * [Übung/Beispiel Ingress]()
   
   1. Anwendungen (Teil 1: Allgemein)
      * Anwendungsskalierung & Load Balancing
