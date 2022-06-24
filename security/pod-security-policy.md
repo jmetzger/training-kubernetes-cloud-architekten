@@ -53,13 +53,16 @@ kubectl get clusterrole | grep ^edit
 
 
 ```
+# Schritt 1 : Namespace
 # https://kubernetes.io/docs/concepts/policy/pod-security-policy/
----
 apiVersion: v1
 kind: Namespace
 metadata:
   name: pod-security-policy-psp-namespace
----
+```
+
+```
+# Schritt 2: PSP 
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
@@ -76,13 +79,25 @@ spec:
     rule: RunAsAny
   volumes:
     - '*'
----
-apiVersion: v1
-kind: ServiceAccount
+```
+
+```
+# Schritt 4: ClusterRole 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
 metadata:
-  name: pod-security-policy-user
-  namespace: pod-security-policy-psp-namespace
----
+  name: psp:privileged
+rules:
+- apiGroups: ['policy']
+  resources: ['podsecuritypolicies']
+  verbs:     ['use']
+  resourceNames:
+  - pod-security-policy-psp 
+
+```
+
+```
+# Schritt 5: Rolebind 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -96,7 +111,18 @@ subjects:
   - kind: ServiceAccount
     name: pod-security-policy-psp-namespace
     namespace: pod-security-policy-psp-namespace
----
+```
+
+```
+# Schritt 6: ServiceAccount 
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pod-security-policy-user
+  namespace: pod-security-policy-psp-namespace
+```
+
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -106,7 +132,9 @@ spec:
   containers:
     - name: pause
       image: k8s.gcr.io/pause
----
+```
+
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -117,9 +145,7 @@ spec:
     - name: pause
       image: k8s.gcr.io/pause
       securityContext:
-        privileged: true
-
-
+        privileged: tru
 ```
 
 ## Ref:
