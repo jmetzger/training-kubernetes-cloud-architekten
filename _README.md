@@ -1,9 +1,86 @@
-# Deployment und Handling von Applikationen mit Kubernetes, Helm, Prometheus und Gitlab
+# Kubernetes Praxis für Cloud Architekten
 
 
-## Agenda  
+## Agenda
+  1. Einführung Container-Architektur
+     * [Warum Kubernetes?](#warum-kubernetes)
+     * [Kubernetes-Cluster-Architektur](#kubernetes-cluster-architektur)
+     * [OpenShift 4 vs. Kubernetes (Vanilla)](#openshift-4-vs-kubernetes-vanilla)
+
+  1. Installation
+     * [Client (Windows)](#client-windows)
+     
+  1. kubectl 
+     * [Spickzettel](#spickzettel)
+     * [bash completion](#bash-completion)
+
+
+  1. Kubernetes Komponenten & Objekte (Teil 1) 
+     * [Pods - by example](#pods---by-example)
+     * [ReplicaSets - by example](#replicasets---by-example)
+     * [Deployments - by example](#deployments---by-example)
+     * [Services - by example](#services---by-example)
+     * Jobs
+     * DaemonSets
+  
+  1. Kubernetes Komponenten (Teil 2: Der Klebstoff) 
+     * [Labels and Annotations](#labels-and-annotations)
+	
+  1. Kubernetes Komponenten (Teil 3: Arbeiten mit Konfigurationen)
+     * [Config Maps](#config-maps)
+     * [Secrets](#secrets)
+  
+  1. Ingress 
+     * [Übersicht Ingress](#übersicht-ingress)
+     * [Ingress Controller auf DigitalOcean aufsetzen](#ingress-controller-auf-digitalocean-aufsetzen)
+     * [Übung/Beispiel Ingress](#übungbeispiel-ingress)
+  
+  1. Kubernetes Paketmanagement (Helm) 
+     * [Warum ? (Dev/Ops)](#warum--devops)
+     * [Grundlagen / Aufbau / Verwendung (Dev/Ops)](#grundlagen--aufbau--verwendung-devops)
+     * [Helm - wichtige Befehle](#helm---wichtige-befehle)
+     * [Praktisches Beispiel bitnami/mysql (Dev/Ops)](#praktisches-beispiel-bitnamimysql-devops)
+  
+  1. Anwendungen (Teil 1: Allgemein)
+     * Anwendungsskalierung & Load Balancing
+     * Rolling Updates
+     * Service Discovery 
+     * Volumes & Storage
+
+  1. Anwendungen (Teil 2: Network and Container-Security) 
+     * Network Security 
+     * Container Security 
+
+  1. RBAC 
+     * [Überblick](#überblick)
+     * [Beispiel User mit RBAC erstellen](#beispiel-user-mit-rbac-erstellen)
+
+  1. Prometheus 
+     * [Prometheus/Grafana Überblick](#prometheusgrafana-überblick)
+     * [Prometheus Installation / Walkthrough](#prometheus-installation--walkthrough)
+
+  1. Infrastructure as Code (IaC) 
+     * Kubernetes Configuration Files 
+     * Helm Package Manager  
+
+  1. CI/CD (Überblick) 
+
+  1. Monitoring and Logging
+     * Prometheus & Grafana
+
+  1. Wrap-up, Q&A und Ausblick
+     * Muss es immer Kubernetes sein?
+     * Was ist Kuberentes und was ist OpenShift 
+     * Function as a Service
+    
+    
+  1. Doku / Tipps & Tricks 
+     * [alte Manifeste migrieren](#alte-manifeste-migrieren)
+     * [Cluster - AWS einrichten](#cluster---aws-einrichten)
+
+## Backlog 
+  
   1. Kubernetes (Refresher) 
-     * [Aufbau von Kubernetes](#aufbau-von-kubernetes)
      * Kubernetes und seine Objekte (pods, replicasets, deployments, services, ingress) 
      * Verbinde mit kubectl 
      * Manifeste ausrollen (im Namespace) (2-3)
@@ -110,9 +187,33 @@
 
 <div class="page-break"></div>
 
-## Kubernetes (Refresher) 
+## Einführung Container-Architektur
 
-### Aufbau von Kubernetes
+### Warum Kubernetes?
+
+
+### Ausgangslage
+
+  * Ich habe jetzt einen Haufen Container, aber:
+    * Wie bekomme ich die auf die Systeme.
+    * Und wie halte ich den Verwaltungsaufwand in Grenzen.
+  * Lösung: Kubernetes -> ein Orchestrierungstool
+
+### Hintergründe
+
+  * Virtualisierung von Hardware - 5fache bessere Auslastung
+  * Google als Ausgangspunkt 
+  * Software 2014 als OpenSource zur Verfügung gestellt 
+  * Optimale Ausnutzung der Hardware, hunderte bis tausende Dienste können auf einigen Maschinen laufen (Cluster)  
+  * Immutable - System
+  * Selbstheilend
+  
+### Wozu dient Kubernetes 
+
+  * Orchestrierung von Containern
+  * am gebräuchlisten aktuell Docker
+
+### Kubernetes-Cluster-Architektur
 
 
 ### Schaubild 
@@ -195,6 +296,1577 @@ Er stellt sicher, dass Container in einem Pod ausgeführt werden.
   * https://www.redhat.com/de/topics/containers/kubernetes-architecture
 
 
+### OpenShift 4 vs. Kubernetes (Vanilla)
+
+
+### Was ist OpenShift 4 in Bezug auf Kubernetes 
+
+  * Die Entwickler von OpenShift 4 bezeichnen Kubernetes gerne als KERNEL, den Kern des Systems. 
+  * Um diesen Kern gibt es entsprechende Erweiterungen, die sich an Kubernetes anlehnen 
+  * OpenShift 4 eine Kubernetes Distribution 
+
+### Was gibt es für Installer für Kubernetes 
+
+  * microk8s (Kommandozeile) - snap - unter Ubuntu standardmäßig snapd eingerichtet 
+  * k3s (kommandozeile) - Einschränkung Prozessor-Architektur (M1 wahrscheinlich nicht wirklich gut) 
+  * k3d (Wrapper k3s) 
+  * Rancher (GUI) / Rancher-Desktop (nur für dev lokal) - Distri ? 
+  * minkube (Linux, OSX, Windows (Virtualisierung zB HyperV)
+  * kubeadm 
+
+### Detail: Welches Betriebssystem kann verwendet werden
+  * Kubernetes: Jedes Linux OS
+  * OpenShift 4: CoreOS
+
+### Detail: Sicherheit für Pods (Container) 
+
+  * Standardmäßig müssen in OpenShift Container als non-root laufen (+ für Openshift) 
+  * OpenShift 4 verwendet ein anderes Sicherheitskonzepten/Sicherheitsmodul als Kubernetes 
+    * OpenShift 4: Security Context Contraints 
+    * Kubernetes:  PodSecurityPolicies (PSP: alt), PodSecurityStandards (PSS: neu) 
+
+### Detail: Container bauen 
+ 
+  * Kubernetes: Innerhalb von Kubernetes mit den nativen Tools von Kubernetes können keine Images gebaut werden
+    * Das bauen von Images erfolgt ausserhalb von kubernetes z.B. mit docker, buildah 
+  * OpenShift 4: Images können innerhalb von OpenShift 4 mit buildah gebaut werden. Es sind keine weiteren Tools notwendig 
+
+### oc vs. kubectl 
+
+  * oc ist eine Erweiterung von kubectl 
+  * Es beherrscht die gleichen Kommandos und noch zusätzliche 
+
+### oc - Vorteile 
+  
+  * Einfacher sich einzulogen
+  * kubernetes kennt keine Projekte (aber auch namespaces) 
+
+### oc - Routen 
+
+  * Gibt es nicht in Kubernetes
+  * Alternative ist der/die Ingress Controller 
+
+### Netzwerk 
+
+  * OpenShift Plugin: MultiTenancy zum Unterbinden von Inter-Namespace-Traffic (kein Traffic zwischen Namespaces) 
+  * Kubernetes: 
+    * Flannel (keinerlei Einschränkungen) - keine Firewall 
+    * Callico (Firewall-Regeln festzulegen -> NetworkPolicies)  
+
+### Detail. Operator
+
+  * OpenShift 4. OpenShift 4 arbeitet sehr viel mit Operatoren 
+    * Weil alles was nicht Operator Vanilla ist, über Operator dargestellt werden muss.
+  * Da Kubernetes out of the box mit weniger Objekten bereits funktioniert, kommen hier per se weniger Operatoren zum Einsatz 
+
+
+## Installation
+
+### Client (Windows)
+
+
+```
+1. cmd.exe (Als Administrator) ausführen und dann ->  wsl —install -d ubuntu
+
+2. Evtl. fordert das System an dieser Stelle zum Neustart auf
+
+3. Dann öffnet ein Installationsfenster. Hier den folgenden User anlegen  
+User: kurs
+Password: password
+
+6. In ubuntu in den root-benutzen wechseln
+
+## password des Benutzer kurs einbegeben
+sudo su -
+
+7. kubectl installieren (als root)
+
+curl -LO https://dl.k8s.io/release/v1.24.0/bin/linux/amd64/kubectl
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+8. Helm installieren (als root)
+
+curl -LO https://get.helm.sh/helm-v3.9.0-linux-amd64.tar.gz
+tar xzvf helm-v3.9.0-linux-amd64.tar.gz
+sudo mv linux-amd64/helm /usr/local/bin/helm
+
+9. Visual Studio Code installieren (z.B. aus microsoft App Store)
+(Sollte aber bereits installiert sein,
+Von voriger Anforderung)
+
+```
+
+## kubectl 
+
+### Spickzettel
+
+
+### Allgemein 
+
+```
+## Zeige Information über das Cluster 
+kubectl cluster-info 
+
+## Welche api-resources gibt es ?
+kubectl api-resources 
+kubectl api-resources | grep namespaces 
+
+## Hilfe zu object und eigenschaften bekommen
+kubectl explain pod 
+kubectl explain pod.metadata
+kubectl explain pod.metadata.name 
+
+```
+
+### Namespace im context ändern 
+
+```
+## mein default namespace soll ein anderer sein, z.B eines Projekt
+kubectl config set-context --current --namespace=tln2 
+
+```
+
+### Hauptkommandos 
+
+```
+kubectl get 
+kubectl delete 
+kubectl create
+```
+
+
+### namespaces 
+
+```
+kubectl get ns
+kubectl get namespaces 
+
+```
+
+### Arbeiten mit manifesten 
+
+```
+kubectl apply -f nginx-replicaset.yml 
+## Wie ist aktuell die hinterlegte config im system
+kubectl get -o yaml -f nginx-replicaset.yml 
+
+## Änderung in nginx-replicaset.yml z.B. replicas: 4 
+## dry-run - was wird geändert 
+kubectl diff -f nginx-replicaset.yml 
+
+## anwenden 
+kubectl apply -f nginx-replicaset.yml 
+
+## Alle Objekte aus manifest löschen
+kubectl delete -f nginx-replicaset.yml 
+
+## Alle objekte im Verzeichnissen und allen Unterverzeichnissen löschen
+## auf Basis der vorliegenden Manifeste 
+kubectl delete -f . -R 
+
+```
+
+### Ausgabeformate / Spezielle Informationen
+
+```
+## Ausgabe kann in verschiedenen Formaten erfolgen 
+kubectl get pods -o wide # weitere informationen 
+## im json format
+kubectl get pods -o json 
+
+## spezielle Eigenschaften zurückgeben 
+kubectl get pods nginx-static-web -o jsonpath='{.metadata.namespace}'
+
+## gilt natürluch auch für andere kommandos
+kubectl get deploy -o json 
+kubectl get deploy -o yaml 
+
+## Label anzeigen 
+kubectl get deploy --show-labels 
+
+```
+
+
+
+### Zu den Pods 
+
+```
+## Start einen pod // BESSER: direkt manifest verwenden
+## kubectl run podname image=imagename 
+kubectl run nginx image=nginx 
+
+## Pods anzeigen 
+kubectl get pods 
+kubectl get pod
+
+## Pods in allen namespaces anzeigen 
+kubectl get pods -A 
+
+## Format weitere Information 
+kubectl get pod -o wide 
+## Zeige labels der Pods
+kubectl get pods --show-labels 
+
+## Zeige pods mit einem bestimmten label 
+kubectl get pods -l app=nginx 
+
+## Status eines Pods anzeigen 
+kubectl describe pod nginx 
+
+## Pod löschen 
+kubectl delete pod nginx 
+
+## Kommando in pod ausführen 
+kubectl exec -it nginx -- bash 
+
+## Pod erstellen (on the fly) on direkt Kommando ausführen 
+kubectl run busybox --rm -it --image busybox /bin/sh
+## das geht auch 
+kubectl run busybox --rm -it --image busybox
+
+```
+
+### Arbeiten mit namespaces 
+
+```
+## Welche namespaces auf dem System 
+kubectl get ns 
+kubectl get namespaces 
+## Standardmäßig wird immer der default namespace verwendet 
+## wenn man kommandos aufruft 
+kubectl get deployments 
+
+## Möchte ich z.B. deployment vom kube-system (installation) aufrufen, 
+## kann ich den namespace angeben
+kubectl get deployments --namespace=kube-system 
+kubectl get deployments -n kube-system 
+```
+
+### Alle Objekte anzeigen 
+
+```
+## Manchen Objekte werden mit all angezeigt 
+kubectl get all 
+kubectl get all,configmaps 
+
+## Über alle Namespaces hinweg 
+kubectl get all -A 
+
+
+```
+
+### Logs
+
+```
+kubectl logs <container>
+kubectl logs <deployment>
+## e.g. 
+## kubectl logs -n namespace8 deploy/nginx
+## with timestamp 
+kubectl logs --timestamp -n namespace8 deploy/nginx
+## continously show output 
+kubectl logs -f <container>
+```
+
+### Debugging hochsetzen für kubectl 
+
+```
+## höchstes Loglevel 9 
+kubectl -v=8 get pods nginx-static-web -o jsonpath='{.metadata.namespace}'
+```
+
+### Referenz
+
+  * https://kubernetes.io/de/docs/reference/kubectl/cheatsheet/
+
+### bash completion
+
+
+### Walkthrough 
+
+```
+sudo su - 
+```
+
+```
+apt install bash-completion
+source /usr/share/bash-completion/bash_completion
+## is it installed properly 
+type _init_completion
+
+## activate for all users 
+kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
+```
+
+```
+## verifizieren - neue login shell
+su -
+
+## zum Testen
+kubectl g<TAB> 
+kubectl get 
+```
+### Alternative für k als alias für kubectl 
+
+```
+source <(kubectl completion bash)
+complete -F __start_kubectl k
+
+```
+
+### Reference 
+
+  * https://kubernetes.io/docs/tasks/tools/included/optional-kubectl-configs-bash-linux/
+
+## Kubernetes Komponenten & Objekte (Teil 1) 
+
+### Pods - by example
+
+
+### Walkthrough 
+
+```
+## vi nginx-static.yml 
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-static-web
+  labels:
+    webserver: nginx
+spec:
+  containers:
+  - name: web
+    image: bitnami/nginx
+
+```
+
+```
+kubectl apply -f nginx-static.yml 
+kubectl describe pod nginx-static-web 
+## show config 
+kubectl get pod/nginx-static-web -o yaml
+kubectl get pod/nginx-static-web -o wide 
+```
+
+### ReplicaSets - by example
+
+
+```
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-replica-set
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      name: nginx-replicas
+      labels:
+        tier: frontend
+    spec:
+      containers:
+        - name: nginx
+          image: "nginx:latest"
+          ports:
+             - containerPort: 80
+
+             
+ ```
+
+### Deployments - by example
+
+
+```
+
+## vi nginx-deployment.yml 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        
+```
+
+```
+kubectl apply -f nginx-deployment.yml 
+```
+
+### Services - by example
+
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-nginx
+spec:
+  selector:
+    matchLabels:
+      run: my-nginx
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: my-nginx
+    spec:
+      containers:
+      - name: cont-nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-nginx
+  labels:
+    run: svc-my-nginx
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    run: my-nginx
+        
+        
+
+        
+        
+```        
+
+### Ref.
+
+  * https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/
+
+## Kubernetes Komponenten (Teil 2: Der Klebstoff) 
+
+### Labels and Annotations
+
+## Kubernetes Komponenten (Teil 3: Arbeiten mit Konfigurationen)
+
+### Config Maps
+
+### Secrets
+
+## Ingress 
+
+### Übersicht Ingress
+
+
+
+
+### Ref. / Dokumentation 
+
+  * https://matthewpalmer.net/kubernetes-app-developer/articles/kubernetes-ingress-guide-nginx-example.html
+
+### Ingress Controller auf DigitalOcean aufsetzen
+
+
+### Basics 
+
+  * Das Verfahren funktioniert auch so auf anderen Plattformen, wenn helm verwendet wird und noch kein IngressController vorhanden
+  * Ist kein IngressController vorhanden, werden die Ingress-Objekte zwar angelegt, es funktioniert aber nicht. 
+
+### Prerequisites 
+
+  * kubectl muss eingerichtet sein 
+
+### Walkthrough (Setup Ingress Controller) 
+
+```
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm show values ingress-nginx/ingress-nginx
+
+## It will be setup with type loadbalancer - so waiting to retrieve an ip from the external loadbalancer
+## This will take a little. 
+helm install nginx-ingress ingress-nginx/ingress-nginx --namespace ingress --create-namespace --set controller.publishService.enabled=true 
+
+## See when the external ip comes available
+kubectl -n ingress get all
+kubectl --namespace ingress get services -o wide -w nginx-ingress-ingress-nginx-controller
+
+## Output  
+NAME                                     TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                      AGE     SELECTOR
+nginx-ingress-ingress-nginx-controller   LoadBalancer   10.245.78.34   157.245.20.222   80:31588/TCP,443:30704/TCP   4m39s   app.kubernetes.io/component=controller,app.kubernetes.io/instance=nginx-ingress,app.kubernetes.io/name=ingress-nginx
+
+## Now setup wildcard - domain for training purpose 
+*.lab1.t3isp.de A 157.245.20.222 
+
+
+```
+
+### Übung/Beispiel Ingress
+
+
+### Prerequisits
+
+```
+## Ingress Controller muss aktiviert sein 
+### Nur der Fall wenn man microk8s zum Einrichten verwendet 
+### Ubuntu 
+microk8s enable ingress
+```
+
+### Walkthrough 
+
+```
+## mkdir apple-banana-ingress
+## cd apple-banana-ingress
+
+## apple.yml 
+## vi apple.yml 
+kind: Pod
+apiVersion: v1
+metadata:
+  name: apple-app
+  labels:
+    app: apple
+spec:
+  containers:
+    - name: apple-app
+      image: hashicorp/http-echo
+      args:
+        - "-text=apple-tln12"
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: apple-service
+spec:
+  selector:
+    app: apple
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5678 # Default port for image
+```
+
+```
+kubectl apply -f apple.yml 
+```
+
+```
+## banana
+## vi banana.yml
+kind: Pod
+apiVersion: v1
+metadata:
+  name: banana-app
+  labels:
+    app: banana
+spec:
+  containers:
+    - name: banana-app
+      image: hashicorp/http-echo
+      args:
+        - "-text=banana-tln12"
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: banana-service
+spec:
+  selector:
+    app: banana
+  ports:
+    - port: 80
+      targetPort: 5678 # Default port for image
+```
+
+```
+kubectl apply -f banana.yml
+```
+
+```
+## Ingress
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: example-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+    # with the ingress controller from helm, you need to set an annotation 
+    # otherwice it does not know, which controller to use
+    # old version... use ingressClassName instead 
+    # kubernetes.io/ingress.class: nginx
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "jochen.lab2.t3isp.de"
+    http:
+      paths:
+        - path: /apple
+          backend:
+            serviceName: apple-service
+            servicePort: 80
+        - path: /banana
+          backend:
+            serviceName: banana-service
+            servicePort: 80
+```
+
+```
+## ingress 
+kubectl apply -f ingress.yml
+kubectl get ing 
+```
+
+### Reference 
+
+  * https://matthewpalmer.net/kubernetes-app-developer/articles/kubernetes-ingress-guide-nginx-example.html
+
+### Find the problem 
+
+```
+## Hints 
+
+## 1. Which resources does our version of kubectl support 
+## Can we find Ingress as "Kind" here.
+kubectl api-ressources 
+
+## 2. Let's see, how the configuration works 
+kubectl explain --api-version=networking.k8s.io/v1 ingress.spec.rules.http.paths.backend.service
+
+## now we can adjust our config 
+```
+
+### Solution
+
+```
+## in kubernetes 1.22.2 - ingress.yml needs to be modified like so.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+    # with the ingress controller from helm, you need to set an annotation 
+    # old version useClassName instead 
+    # otherwice it does not know, which controller to use
+    # kubernetes.io/ingress.class: nginx 
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "app12.lab.t3isp.de"
+    http:
+      paths:
+        - path: /apple
+          pathType: Prefix
+          backend:
+            service:
+              name: apple-service
+              port:
+                number: 80
+        - path: /banana
+          pathType: Prefix
+          backend:
+            service:
+              name: banana-service
+              port:
+                number: 80                
+```
+
+## Kubernetes Paketmanagement (Helm) 
+
+### Warum ? (Dev/Ops)
+
+
+```
+Ein Paket für alle Komponenten
+Einfaches Installieren und Updaten.
+Feststehende Struktur, durch die andere Pakete teilen können 
+```
+
+### Grundlagen / Aufbau / Verwendung (Dev/Ops)
+
+
+### Wo ? 
+
+```
+artifacts helm 
+https://artifacthub.io/
+```
+### Komponenten 
+
+```
+Chart - beeinhaltet Beschreibung und Komponenten 
+tar.gz - Format 
+
+Wenn wir ein Chart ausführen wird eine Release erstellen 
+(parallel: image -> container, analog: chart -> release 
+```
+
+### Installation 
+
+```
+## Beispiel ubuntu 
+## snap install --classic helm
+
+## Cluster muss vorhanden, aber nicht notwendig wo helm installiert 
+
+## Voraussetzung auf dem Client-Rechner (helm ist nichts als anderes als ein Client-Programm) 
+Ein lauffähiges kubectl auf dem lokalen System (welches sich mit dem Cluster verbinden.
+-> saubere -> .kube/config 
+
+## Test
+kubectl cluster-info 
+
+```
+
+### Installation: Ref:
+
+  * https://helm.sh/docs/intro/install/
+
+### Helm - wichtige Befehle
+
+
+```
+## Repos
+helm repo add gitlab http://charts.gitlab.io 
+helm repo list 
+helm repo remove gitlab 
+helm repo update 
+
+## Suchen 
+helm search repo mysql # in allen konfigurierten Repos suchen 
+
+## Chart herunterladen 
+helm repo pull bitnami/mysql 
+
+## Releases anzeigen 
+helm list 
+## history anzeigen 
+helm history my-mysql 
+
+## Release installieren - my-mysql ist hier hier release-name 
+helm install my-mysql bitnami-mysql 
+helm install [name] [chart] --dry-run --debug -f <your_values_file> # dry run 
+## + verwendete values anzeigen 
+helm get values 
+
+## upgrade, wenn vorhanden, ansonsten install 
+helm upgrade --install my-mysql bitnami/mysql 
+
+## Nur template parsen - ohne an den kube-api-server zu schicken  
+helm template my-mysql bitnami/mysql > test.yml 
+## template und hilfeseite aufgaben und vorher alles an den kube-api-server 
+## zur Validierung schicken
+helm install --dry-run my-mysql bitnami/mysql 
+
+
+```
+
+### Praktisches Beispiel bitnami/mysql (Dev/Ops)
+
+
+### Prerequisites 
+
+  * kubectl needs to be installed and configured to access cluster
+  * Good: helm works as unprivileged user as well - Good for our setup 
+  * install helm on ubuntu (client) as root: snap install --classic helm 
+    * this installs helm3
+  * Please only use: helm3. No server-side comoponents needed (in cluster) 
+    * Get away from examples using helm2 (hint: helm init) - uses tiller  
+
+### Example 1: We will setup mysql
+
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami 
+## paketliste aktualisieren
+helm repo update
+helm search repo bitnami 
+```
+
+```
+## download chart - Optional 
+## for exercise: to learn how it is structured 
+helm pull bitnami/mysql
+mkdir lookaround 
+cp -a mysql-*.tgz lookaround
+cd lookaround
+tar xvf mysql-*.tgz 
+```
+
+```
+helm install my-mysql bitnami/mysql
+```
+
+
+### Example 2 - values in der Kommandozeile 
+```
+### Vorbereiten - alte Installation löschen
+helm uninstall my-mysql 
+kubectl delete pvc data-my-mysql-0
+
+## Install with persistentStorage disabled - Setting a specific value 
+helm install my-mysql --set primary.persistence.enabled=false bitnami/mysql
+helm get values my-mysql 
+## Alternative if already installed 
+
+## just as notice 
+## helm uninstall my-mysql 
+
+```
+
+### Example 3: values im extra-file (auch mehrere möglich)
+
+```
+## Aufräumen 
+helm uninstall my-mysql 
+
+```
+
+```
+## vi values.yaml
+primary:                                                                                             
+  persistence:
+    enabled: false 
+```
+
+```
+helm install my-mysql -f values.yaml bitnami/mysql 
+## hilfe
+helm get values --help 
+## Alle, auch defaults anzeigen
+helm get values my-mysql --all # alternativ -a  
+
+helm get values my-mysql -o json 
+helm get values my-mysql # default: yaml ausgabe 
+helm list 
+## Allerdings nur 1 Eintrag, bei upgrade sinds mehrere drin 
+helm history my-mysql
+
+```
+
+### Referenced
+
+  * https://github.com/bitnami/charts/tree/master/bitnami/mysql/#installing-the-chart
+  * https://helm.sh/docs/intro/quickstart/
+
+## Anwendungen (Teil 1: Allgemein)
+
+## Anwendungen (Teil 2: Network and Container-Security) 
+
+## RBAC 
+
+### Überblick
+
+
+### Bereich 1: Welche Objekte darf ich als Helm/kubectl - Nutzer erstellen/bearbeiten/ändern 
+
+```
+kubectl 
+-> user: 
+   -> token: identifizert.
+
+users:
+- name: admin
+  user:
+    token: Q2tJbEsxaUI0eFVDT3haYXJIVGxyYWhsWURHRFlnZ25QWVpNd3lVdi9BST0K
+
+--> über ein Token ->
+Hier kann auch ein anderer Context hinzugefügt, der dann als Nutzer verwenden kann 
+z.B. context restricteduser
+kubectl config use-context restricteduser  
+
+```
+
+```
+Benutzer (User/ServiceAccount) <----->. Rolebinding/Clusterrolebinding   <------> Role/Clusterrole            
+```
+
+```
+## Standard: default -> bei serviceAccount der automatisch eingebunden wird,
+alternativ 
+
+kubectl explain deployment.spec.template.spec.serviceAccountName
+## <- dann wird dieser ServiceAccountName verwendet.
+
+```
+
+
+
+```
+Schritt 1: Authentifizierung -> Du darfst generell erstmal zugreifen...
+
+Schritt 2: Was darfst du ? 
+anhand von -> rolebinding/clusterrolebinding -> role/clusterrole  
+```
+
+### Bereich 2: Wie darf einer Nutzer xy einen Pod starten / Vorgabe !!! 
+
+```
+## Ebene 1: Ein User / Service Account :    hans / nginx-ingress 
+
+## Ebene 2: Ein rolebinding / clusterrolebinding 
+hans -> rolebinding rechte_verknuepfung_hans -> role 
+
+## Ebene 3: Rolle (z.B. nicht_admin_rolle)
+## In der Rolle steht drin, welche PodSecurityPolicy für ihn gilt 
+
+## Ebene 4:
+## Definierte PodSecurityPolicy 
+```
+
+
+### Bereich 3: Welcher Dienst/Controller/Pod -> darf was machen / abfragen 
+
+```
+## Beispiel, was darf ein Pod -> z.B. nginx in Bezug auf Anfragen an den kube-api-server 
+## Wenn er bereits im laufenden Betrieb ist. 
+
+## Puzzle - Teil 1: Mit welchem Token / Account greift er zu 
+kubectl run nginx --image=nginx 
+
+## Er hängt automatisch den ServiceAccount und das ca-cert und auch den namespace 
+kubectl describe po nginx 
+kubectl get po nginx -o yaml 
+
+kubectl exec -it nginx -- bash 
+## cd /var/run/secrets/kubernetes.io/serviceaccount
+## ls -la
+## cat namespace 
+## cat token 
+
+## So können wir auf den kube-api-server low level zugreifen 
+## Es ist ein jwt-token, mit Zusatzinformationen wie ServiceAccount
+## Läßt sich mit jwt oder auf jwt.io auslesen 
+TOKEN=$(cat token)
+## Esi ist immer diese Domain zum Kube-Api-Server 
+API_URL=https://kubernetes.default.svc.cluster.local
+
+## Api -> v1 abfragen
+## curl --cacert ca.crt -H "Authorization: Bearer $TOKEN" $API_URL/api 
+## Alle anderen apis abfragen (welche gibt es) -> z.B. apps/v1 
+curl --cacert ca.crt -H "Authorization: Bearer $TOKEN" $API_URL/apis
+
+## Ist mein Token falsch, bekomme ich forbidden 403 
+curl --cacert ca.crt -H "Authorization: Bearer $TOKENx" $API_URL/apis 
+
+## Ist mein Token korrekt, aber Pfad falsch auch -> 403 -> apis3 gibt es nicth auf dem Server
+curl --cacert ca.crt -H "Authorization: Bearer $TOKEN" $API_URL/apis3 
+```
+
+```
+Ergebnis des Tokens in jwt.io
+eyJhbGciOiJSUzI1NiIsImtpZCI6Ikx1SFlBUlRWNHJ1SlV2T1JxdTdkaElZd0lyOGJzTTVZUmpmM3E2VUJiNm8ifQ.eyJhdWQiOlsiaHR0cHM6Ly9rdWJlcm5ldGVzLmRlZmF1bHQuc3ZjIl0sImV4cCI6MTY4NTc5MDc3OSwiaWF0IjoxNjU0MjU0Nzc5LCJpc3MiOiJodHRwczovL2t1YmVybmV0ZXMuZGVmYXVsdC5zdmMiLCJrdWJlcm5ldGVzLmlvIjp7Im5hbWVzcGFjZSI6ImRlZmF1bHQiLCJwb2QiOnsibmFtZSI6Im5naW54IiwidWlkIjoiYzFjZDlhOTItZWQ4Yi00YTc1LTkxYWMtODk3ZWU4NGY1ZTdiIn0sInNlcnZpY2VhY2NvdW50Ijp7Im5hbWUiOiJkZWZhdWx0IiwidWlkIjoiZmY2NDJhNjMtNDBiOC00ZDNkLTlkMmEtYzA2MjA2ODdkN2Q0In0sIndhcm5hZnRlciI6MTY1NDI1ODM4Nn0sIm5iZiI6MTY1NDI1NDc3OSwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OmRlZmF1bHQ6ZGVmYXVsdCJ9.xR1qQGOzNu8NLZ8XwsG5ZgIHk-y0Z_pEBWqtKhBGDEFZwbdIlWRbfBN0xHrKqmgib9QvBqosqIM4G2Ozm9Dv-4bEZyjqybq8ylKCmRWVA62LjooS5k7gl1E3ws7qY5G2Jb28MPo-x7Gvgx4MBGCACWsPgfaKLF0kwcbGxHC6VWG7Bgj21di-_aHeuuBslhkGHeSLHyuWOXwOPi7ne59b1rAUKblzmEwNbWqRtGKBjqzelkbAq80GD7-khK3LxbOaB9XVN6LzvvXeqjOXGSVUr3gkE4SNM-R1zYO1raXdD6xJ9cHBbRg_kj3PwpD_dxWDYlG-VU_5Zl6v8SAIlILvrg 
+
+## payload data
+{
+  "aud": [
+    "https://kubernetes.default.svc"
+  ],
+  "exp": 1685790779,
+  "iat": 1654254779,
+  "iss": "https://kubernetes.default.svc",
+  "kubernetes.io": {
+    "namespace": "default",
+    "pod": {
+      "name": "nginx",
+      "uid": "c1cd9a92-ed8b-4a75-91ac-897ee84f5e7b"
+    },
+    "serviceaccount": {
+      "name": "default",
+      "uid": "ff642a63-40b8-4d3d-9d2a-c0620687d7d4"
+    },
+    "warnafter": 1654258386
+  },
+  "nbf": 1654254779,
+  "sub": "system:serviceaccount:default:default"
+}
+```
+
+### Welche Berechtigungen ? 
+
+```
+1. Ebene 
+Welche apiGroups  ? 
+z.B. apps/v1 oder alles * 
+[''] -> v1 
+```
+
+```
+2. Ebene 
+Welche Ressourcen -> welches Kind 
+deployment
+* <- für alle 
+```
+
+```
+3. Ebene -> verbs a.k.a (Operationen) 
+list (kubectl get pods) - Liste -- > items 
+get (kubectl get pod live-pod) -
+create
+delete
+watch 
+update
+```
+
+### Beispiel User mit RBAC erstellen
+
+
+### Enable RBAC in microk8s 
+
+```
+## This is important, if not enable every user on the system is allowed to do everything 
+microk8s enable rbac 
+```
+
+### Wichtig:
+
+```
+Jeder verwendet seine eigene teilnehmer-nr z.B. 
+training1
+training2
+usw. ;o)
+```
+
+
+
+
+
+### Schritt 1: Nutzer-Account auf Server anlegen / in Client 
+
+```
+cd 
+mkdir -p manifests/rbac
+cd manifests/rbac
+```
+
+####  Mini-Schritt 1: Definition für Nutzer 
+
+```
+## vi service-account.yml 
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: training<nr> # <nr> entsprechend eintragen
+  namespace: default
+```
+
+```
+kubectl apply -f service-account.yml 
+```
+
+
+#### Mini-Schritt 2: ClusterRolle festlegen - Dies gilt für alle namespaces, muss aber noch zugewiesen werden
+
+```
+### Bevor sie zugewiesen ist, funktioniert sie nicht - da sie keinem Nutzer zugewiesen ist 
+
+## vi pods-clusterrole.yml 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pods-clusterrole-<nr> # für <nr> teilnehmer - nr eintragen
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+
+kubectl apply -f pods-clusterrole.yml 
+```
+
+#### Mini-Schritt 3: Die ClusterRolle den entsprechenden Nutzern über RoleBinding zu ordnen 
+```
+## vi rb-training-ns-default-pods.yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: rolebinding-ns-default-pods<nr>
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: pods-clusterrole-<nr> # <nr> durch teilnehmer nr ersetzen 
+subjects:
+- kind: ServiceAccount
+  name: training<nr> # nr durch teilnehmer - nr ersetzen 
+  namespace: default
+
+kubectl apply -f rb-training-ns-default-pods.yml
+
+```
+
+#### Mini-Schritt 4: Testen (klappt der Zugang) 
+
+```
+kubectl auth can-i get pods -n default --as system:serviceaccount:default:training<nr> # nr durch teilnehmer - nr ersetzen 
+```
+
+### Schritt 2: Context anlegen / Credentials auslesen und in kubeconfig hinterlegen 
+
+#### Mini-Schritt 1: kubeconfig setzen 
+```
+kubectl config set-context training-ctx --cluster microk8s-cluster --user training<nr> # <nr> durch teilnehmer - nr ersetzen 
+
+## extract name of the token from here 
+TOKEN_NAME=`kubectl -n default get serviceaccount training<nr> -o jsonpath='{.secrets[0].name}'` # nr durch teilnehmer <nr> ersetzen 
+
+TOKEN=`kubectl -n default get secret $TOKEN_NAME -o jsonpath='{.data.token}' | base64 --decode`
+echo $TOKEN
+kubectl config set-credentials training<nr> --token=$TOKEN # <nr> druch teilnehmer - nr ersetzen 
+kubectl config use-context training-ctx
+
+## Hier reichen die Rechte nicht aus 
+kubectl get deploy
+## Error from server (Forbidden): pods is forbidden: User "system:serviceaccount:kube-system:training" cannot list # resource "pods" in API group "" in the namespace "default"
+```
+
+#### Mini-Schritt 2:
+```
+kubectl config use-context training-ctx
+kubectl get pods 
+```
+
+### Refs:
+
+  * https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengaddingserviceaccttoken.htm
+  * https://microk8s.io/docs/multi-user
+  * https://faun.pub/kubernetes-rbac-use-one-role-in-multiple-namespaces-d1d08bb08286
+
+
+
+## Prometheus 
+
+### Prometheus/Grafana Überblick
+
+
+### What does it do ?
+
+  * It monitors your system by collecting data
+  * Data is pulled from your system by defined endpoints (http) from your cluster 
+  * To provide data on your system, a lot of exporters are available, that
+    * collect the data and provide it in Prometheus
+
+### Technical 
+
+  * Prometheus has a TDB (Time Series Database) and is good as storing time series with data
+  * Prometheus includes a local on-disk time series database, but also optionally integrates with remote storage systems.
+  * Prometheus's local time series database stores data in a custom, highly efficient format on local storage.
+  * Ref: https://prometheus.io/docs/prometheus/latest/storage/
+
+### What are time series ? 
+
+  * A time series is a sequence of data points that occur in successive order over some period of time. 
+  * Beispiel: 
+    * Du willst die täglichen Schlusspreise für eine Aktie für ein Jahr dokumentieren
+    * Damit willst Du weitere Analysen machen 
+    * Du würdest das Paar Datum/Preis dann in der Datumsreihenfolge sortieren und so ausgeben
+    * Dies wäre eine "time series" 
+
+### Kompenenten von Prometheus 
+
+![Prometheus Schaubild](https://www.devopsschool.com/blog/wp-content/uploads/2021/01/What-is-Prometheus-Architecutre-components1-740x414.png)
+
+Quelle: https://www.devopsschool.com/
+
+#### Prometheus Server 
+
+1. Retrieval (Sammeln) 
+   * Data Retrieval Worker 
+     * pull metrics data
+1. Storage 
+   * Time Series Database (TDB)
+     * stores metrics data
+1. HTTP Server 
+   * Accepts PromQL - Queries (e.g. from Grafana)
+     * accept queries 
+  
+### Grafana ? 
+
+  * Grafana wird meist verwendet um die grafische Auswertung zu machen.
+  * Mit Grafana kann ich einfach Dashboards verwenden 
+  * Ich kann sehr leicht festlegen (Durch Data Sources), wo meine Daten herkommen
+
+### Prometheus Installation / Walkthrough
+
+
+### Prerequisites
+
+  * Ubuntu 20.04 with running microk8s single cluster 
+  * Works on any other cluster, but installing helm is different 
+
+### Prepare 
+
+```
+## Be sure helm is installed on your client 
+## In our walkthrough, we will do it directly on 1 node, 
+## which is not recommended for Production 
+
+```
+
+### Walkthrough 
+
+#### Step 1: install helm, if not there yet
+
+```
+snap install --classic helm 
+```
+
+#### Step 2: Rollout prometheus/grafana stack in namespace prometheus 
+
+```
+## add prometheus repo 
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+## install stack into new prometheus namespace 
+helm install -n prometheus --create-namespace prometheus prometheus-community/kube-prometheus-stack
+
+## After installation look at the pods 
+## You should see 3 pods 
+kubectl --namespace prometheus get pods -l "release=prometheus"
+
+## After a while it should be more pods
+kubectl get all -n prometheus
+
+```
+
+#### Step 3a Let's explain (der Prometheus - Server)  
+
+```
+## 2 Stateful sets
+kubectl get statefulsets  -n prometheus
+## output 
+## alertmanager-prometheus-kube-prometheus-alertmanager   1/1     5m14s
+## prometheus-prometheus-kube-prometheus-prometheus.      1/1.    5m23s
+```
+```
+## Moving part 1: 
+## prometheus-prometheus-kube-prometheus-prometheus
+## That is the core prometheus server based on the main image 
+
+## Let's validate 
+## schauen wir mal in das File 
+kubectl get statefulset -n prometheus -o yaml > sts-prometheus-server.yml
+
+## Und vereinfacht (jetzt sehen wir direkt die beiden verwendeten images)
+## 1) prometheus - server
+## 2) der dazugehörige config-reloader als Side-Car 
+kubectl get sts -n prometheus prometheus-prometheus-kube-prometheus-prometheus -o jsonpath='{.spec.template.spec.containers[*].image}'
+
+## Aber wer managed den server -> managed-by -> kubernetes-operator 
+kubectl get sts -n prometheus prometheus-prometheus-kube-prometheus-prometheus -o jsonpath="{.spec.template.metadata.labels}" | jq .
+
+## Wir der sts von helm erstellt ? 
+## NEIN ;o) 
+## show us all the template that helm generate to apply them to kube-api-server 
+helm template prometheus prometheus-community/kube-prometheus-stack > all-prometheus.yml 
+## NOPE -> none 
+cat all-prometheus.yaml | grep -i kind: | grep -i stateful
+
+## secrets -> configuration von prometheus
+## wenn ein eigenschaft Punkte hat, z.B. prometheus.yaml.gz
+##
+## {"prometheus.yaml.gz":"H4s 
+## dann muss man escapen, um darauf zuzugreifen -> aus . wird \.
+kubectl get -n prometheus secrets prometheus-prometheus-kube-prometheus-prometheus -o jsonpath='{.data.prometheus\.yaml\.gz}' | base64 -d | gzip -d - 
+
+
+```
+
+### Step 3b: Prometheus Operator und Admission Controller -> Hook 
+
+```
+## The Prometheus Operator for Kubernetes 
+## provides easy monitoring definitions 
+## for Kubernetes services and deployment and management of Prometheus instances.
+
+## But how are they created 
+## After installation new resource-type are introduced 
+cat all-prometheus.yaml | grep ^kind: | grep -e 'Prometheus' -e 'ServiceM' | uniq
+kind: Prometheus
+kind: PrometheusRule
+kind: ServiceMonitor
+```
+
+#### Step 3c: How are the StatefulSets created
+
+```
+## New custom resource definitions are created 
+## The Prometheus custom resource definition (CRD) declaratively defines a desired Prometheus setup to run in a Kubernetes cluster. It provides options to # configure replication, persistent storage, and Alertmanagers to which the deployed Prometheus instances send alerts to.
+
+## For each Prometheus resource, the Operator deploys a properly configured StatefulSet in the same namespace. The Prometheus Pods are configured to mount # ca Secret called <prometheus-name> containing the configuration for Prometheus.
+## https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/crds/crd-prometheuses.yaml
+
+```
+
+#### Step 3d: How are PrometheusRules created 
+
+```
+## PrometheusRule are manipulated by the MutationHook when they enter the AdmissionController
+## The AdmissionController is used after proper authentication in the kube-api-server
+
+cat all-prometheus.yml | grep 'Mutating' -B1 -A32
+```
+
+```
+## Output 
+## Ref: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name:  prometheus-kube-prometheus-admission
+  labels:
+    app: kube-prometheus-stack-admission    
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/version: "35.4.2"
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    chart: kube-prometheus-stack-35.4.2
+    release: "prometheus"
+    heritage: "Helm"
+webhooks:
+  - name: prometheusrulemutate.monitoring.coreos.com
+    failurePolicy: Ignore
+    rules:
+      - apiGroups:
+          - monitoring.coreos.com
+        apiVersions:
+          - "*"
+        resources:
+          - prometheusrules
+        operations:
+          - CREATE
+          - UPDATE
+    clientConfig:
+      service:
+        namespace: prometheus
+        name: prometheus-kube-prometheus-operator
+        path: /admission-prometheusrules/mutate
+    admissionReviewVersions: ["v1", "v1beta1"]
+    sideEffects: None
+```
+
+#### Step 4: Let's look into Deployments
+
+```
+kubectl -n prometheus get deploy 
+```
+
+  * What do they do 
+
+#### Step 5: Let's look into DaemonSets 
+
+```
+kubectl -n prometheus get ds
+## node-exporter runs on every node
+## connects to server, collects data and exports it
+## so it is available for prometheus at the endpoint 
+```
+
+#### Helm -> prometheus stack -> What does it do 
+
+  * Sets up Monitoring Stack
+  * Configuration for your K8s cluster 
+    * Worker Nodes monitored 
+    * K8s components (pods a.s.o) are monitored 
+
+#### Where does configuration come from ? 
+
+```
+## roundabout 31 configmaps 
+kubectl -n prometheus get configmaps 
+
+## also you have secrets (Grafana, Prometheus, Operator)
+kubectl -n prometheus get secrets 
+
+```
+
+#### CRD's were created 
+
+```
+## custom resource definitions 
+kubectl -n prometheus crd 
+## Sehr lang ! 
+kubectl -n prometheus get crd/prometheuses.monitoring.coreos.com -o yaml
+
+```
+
+### Look into the pods to see the image used, how configuration is mounted 
+
+```
+kubectl -n prometheus get sts
+kubectl -n prometheus describe sts/prometheus-prometheus-kube-prometheus-prometheus > prom.yml  
+kubectl -n prometheus describe sts/alertmanager-prometheus-kube-prometheus-alertmanager > alert.yml  
+
+kubectl -n prometheus get deploy 
+kubectl -n prometheus describe deploy/prometheus-kube-prometheus-operator > operator.yml 
+
+## ---> das SECRET erstellt der Kubernetes Operator für uns !
+## First prom.yml 
+##. Mounts:
+##      /etc/prometheus/config from config (rw)
+##  -> What endpoints to scrape 
+## comes from:
+kubectl get -n prometheus secrets prometheus-prometheus-kube-prometheus-prometheus -o jsonpath='{.data.prometheus\.yaml\.gz}' | base64 -d | gunzip > config-prom.yml
+## vi config-prom.yml 
+## Look into the scrape_configs 
+
+```
+
+### Connect to grafana 
+
+```
+## wie ist der port 3000 
+kubectl logs prometheus-grafana-776fb976f7-w9nrp grafana
+## hier nochmal port und auch, wie das secret heisst
+kubectl describe pods prometheus-grafana-776fb976f7-w9nrp | less
+
+## user / pass ? 
+kubectl get -n prometheus secrets prometheus-grafana -o jsonpath='{.data.admin-password}' | base64 -d
+kubectl get -n prometheus secrets prometheus-grafana -o jsonpath='{.data.admin-user}' | base64 -d
+
+## localhost:3000 erreichbarkeit starten -- im Vordergrund
+kubectl port-forward deploy/prometheus-grafana 3000
+## if on remote - system do a ssh-tunnel 
+## ssh -L 3000:127.0.0.1:3000 user@remote-ip 
+
+
+## letzte Schritt: browser aufrufen: http://localhost:3000
+
+
+```
+
+### Reference:
+
+  * Techworld with Nana: [https://www.youtube.com/watch?v=QoDqxm7ybLc](https://youtu.be/QoDqxm7ybLc?t=190)
+
+## Infrastructure as Code (IaC) 
+
+## CI/CD (Überblick) 
+
+## Monitoring and Logging
+
+## Wrap-up, Q&A und Ausblick
+
+## Doku / Tipps & Tricks 
+
+### alte Manifeste migrieren
+
+
+### What is about? 
+
+  * Plugins needs to be installed seperately on Client (or where you have your manifests) 
+
+### Walkthrough 
+
+```
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl-convert"
+## Validate the checksum
+curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl-convert.sha256"
+echo "$(<kubectl-convert.sha256) kubectl-convert" | sha256sum --check
+## install 
+sudo install -o root -g root -m 0755 kubectl-convert /usr/local/bin/kubectl-convert
+
+## Does it work 
+kubectl convert --help 
+
+## Works like so 
+## Convert to the newest version 
+## kubectl convert -f pod.yaml
+
+```
+
+### Reference 
+
+  * https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-convert-plugin 
+
+### Cluster - AWS einrichten
+
+
+```
+I. Konto erstellen 
+
+1. Konto erstellen -> Free Tier 
+2. Anmelden als Benutzer mit Email 
+3. IAM Benutzer erstellen https://console.aws.amazon.com/iam/
+
+In der Management-Konsole 
+4. Benutzer -> Benutzer hinzufügen 
+-> AWS-Anmeldeinformation -> Zugriffschlüssel 
+
+-> Now Group AdministratorAccess - not ideal 
+```
+
+```
+II. Software aws installieren
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+III. Software eksctl installieren 
+
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+eksctl version
+
+IV. Iam-authenticator installieren 
+
+curl -o aws-iam-authenticator https://s3.us-west-2.amazonaws.com/amazon-eks/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator
+chmod +x ./aws-iam-authenticator
+mkdir -p $HOME/bin && cp ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$PATH:$HOME/bin
+echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+aws-iam-authenticator help
+
+Ref: https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
+
+V. I Am für eks verwenden.
+
+~/.aws/credentials
+
+[default]
+aws_access_key_id=XYZZZZZZAKIAIOSFODNN7EXAMPLE
+aws_secret_access_key=wJalXYZZrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html
+
+VI. 
+## eksctl create cluster 
+eksctl create cluster —name=test-cluster —version 1.22 —region eu-central-1 —nodegroup-name linux-nodes —node-type t2.micro —nodes 2 
+
+VII. Delete cluster with eksctl 
+
+eksctl delete cluster --name <prod>
+```
+
+### Tutorial 
+
+Ref: https://www.youtube.com/watch?v=p6xDCz00TxU
+
+
+
+
+
+
+
+## Kubernetes (Refresher) 
+
 ## Kubernetes Praxis API-Objekte 
 
 ### Das Tool kubectl (Devs/Ops)
@@ -259,6 +1931,9 @@ kubectl apply -f nginx-replicaset.yml
 ## Alle Objekte aus manifest löschen
 kubectl delete -f nginx-replicaset.yml 
 
+## Alle objekte im Verzeichnissen und allen Unterverzeichnissen löschen
+## auf Basis der vorliegenden Manifeste 
+kubectl delete -f . -R 
 
 ```
 
@@ -269,6 +1944,9 @@ kubectl delete -f nginx-replicaset.yml
 kubectl get pods -o wide # weitere informationen 
 ## im json format
 kubectl get pods -o json 
+
+## spezielle Eigenschaften zurückgeben 
+kubectl get pods nginx-static-web -o jsonpath='{.metadata.namespace}'
 
 ## gilt natürluch auch für andere kommandos
 kubectl get deploy -o json 
@@ -311,6 +1989,11 @@ kubectl delete pod nginx
 
 ## Kommando in pod ausführen 
 kubectl exec -it nginx -- bash 
+
+## Pod erstellen (on the fly) on direkt Kommando ausführen 
+kubectl run busybox --rm -it --image busybox /bin/sh
+## das geht auch 
+kubectl run busybox --rm -it --image busybox
 
 ```
 
@@ -356,7 +2039,12 @@ kubectl logs --timestamp -n namespace8 deploy/nginx
 kubectl logs -f <container>
 ```
 
+### Debugging hochsetzen für kubectl 
 
+```
+## höchstes Loglevel 9 
+kubectl -v=8 get pods nginx-static-web -o jsonpath='{.metadata.namespace}'
+```
 
 ### Referenz
 
@@ -637,10 +2325,12 @@ metadata:
     ingress.kubernetes.io/rewrite-target: /
     # with the ingress controller from helm, you need to set an annotation 
     # otherwice it does not know, which controller to use
-    kubernetes.io/ingress.class: nginx 
+    # old version... use ingressClassName instead 
+    # kubernetes.io/ingress.class: nginx
 spec:
+  ingressClassName: nginx
   rules:
-  - host: "app12.lab1.t3isp.de"
+  - host: "jochen.lab2.t3isp.de"
     http:
       paths:
         - path: /apple
@@ -689,9 +2379,11 @@ metadata:
   annotations:
     ingress.kubernetes.io/rewrite-target: /
     # with the ingress controller from helm, you need to set an annotation 
+    # old version useClassName instead 
     # otherwice it does not know, which controller to use
-    kubernetes.io/ingress.class: nginx 
+    # kubernetes.io/ingress.class: nginx 
 spec:
+  ingressClassName: nginx
   rules:
   - host: "app12.lab.t3isp.de"
     http:
@@ -3268,7 +4960,7 @@ Quelle: https://www.devopsschool.com/
 
   * Grafana wird meist verwendet um die grafische Auswertung zu machen.
   * Mit Grafana kann ich einfach Dashboards verwenden 
-  * Ich kann sehr leicht festlegen (Durch Data Sources), so meine Daten herkommen
+  * Ich kann sehr leicht festlegen (Durch Data Sources), wo meine Daten herkommen
 
 ### Prometheus Installation / Walkthrough
 
@@ -3506,11 +5198,14 @@ kubectl logs prometheus-grafana-776fb976f7-w9nrp grafana
 kubectl describe pods prometheus-grafana-776fb976f7-w9nrp | less
 
 ## user / pass ? 
-kubectl get secrets prometheus-grafana -o jsonpath='{.data.admin-password}' | base64 -d
-kubectl get secrets prometheus-grafana -o jsonpath='{.data.admin-user}' | base64 -d
+kubectl get -n prometheus secrets prometheus-grafana -o jsonpath='{.data.admin-password}' | base64 -d
+kubectl get -n prometheus secrets prometheus-grafana -o jsonpath='{.data.admin-user}' | base64 -d
 
 ## localhost:3000 erreichbarkeit starten -- im Vordergrund
 kubectl port-forward deploy/prometheus-grafana 3000
+## if on remote - system do a ssh-tunnel 
+## ssh -L 3000:127.0.0.1:3000 user@remote-ip 
+
 
 ## letzte Schritt: browser aufrufen: http://localhost:3000
 
@@ -3544,7 +5239,7 @@ kubectl config view --minify | grep namespace:
 ### Basics 
 
   * Das Verfahren funktioniert auch so auf anderen Plattformen, wenn helm verwendet wird und noch kein IngressController vorhanden
-  * Ist kein IngressController vorhanden, werden die Objekte zwar angelegt, es funktioniert aber nicht. 
+  * Ist kein IngressController vorhanden, werden die Ingress-Objekte zwar angelegt, es funktioniert aber nicht. 
 
 ### Prerequisites 
 
@@ -3559,10 +5254,11 @@ helm show values ingress-nginx/ingress-nginx
 
 ## It will be setup with type loadbalancer - so waiting to retrieve an ip from the external loadbalancer
 ## This will take a little. 
-helm install nginx-ingress ingress-nginx/ingress-nginx --set controller.publishService.enabled=true
+helm install nginx-ingress ingress-nginx/ingress-nginx --namespace ingress --create-namespace --set controller.publishService.enabled=true 
 
-## See when the external ip comes available 
-kubectl --namespace default get services -o wide -w nginx-ingress-ingress-nginx-controller
+## See when the external ip comes available
+kubectl -n ingress get all
+kubectl --namespace ingress get services -o wide -w nginx-ingress-ingress-nginx-controller
 
 ## Output  
 NAME                                     TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                      AGE     SELECTOR
@@ -3679,13 +5375,16 @@ kubectl get clusterrole | grep ^edit
 
 
 ```
+## Schritt 1 : Namespace
 ## https://kubernetes.io/docs/concepts/policy/pod-security-policy/
----
 apiVersion: v1
 kind: Namespace
 metadata:
   name: pod-security-policy-psp-namespace
----
+```
+
+```
+## Schritt 2: PSP 
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
@@ -3702,13 +5401,25 @@ spec:
     rule: RunAsAny
   volumes:
     - '*'
----
-apiVersion: v1
-kind: ServiceAccount
+```
+
+```
+## Schritt 4: ClusterRole 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
 metadata:
-  name: pod-security-policy-user
-  namespace: pod-security-policy-psp-namespace
----
+  name: psp:privileged
+rules:
+- apiGroups: ['policy']
+  resources: ['podsecuritypolicies']
+  verbs:     ['use']
+  resourceNames:
+  - pod-security-policy-psp 
+
+```
+
+```
+## Schritt 5: Rolebind 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -3722,7 +5433,18 @@ subjects:
   - kind: ServiceAccount
     name: pod-security-policy-psp-namespace
     namespace: pod-security-policy-psp-namespace
----
+```
+
+```
+## Schritt 6: ServiceAccount 
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pod-security-policy-user
+  namespace: pod-security-policy-psp-namespace
+```
+
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -3732,7 +5454,9 @@ spec:
   containers:
     - name: pause
       image: k8s.gcr.io/pause
----
+```
+
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -3743,9 +5467,7 @@ spec:
     - name: pause
       image: k8s.gcr.io/pause
       securityContext:
-        privileged: true
-
-
+        privileged: tru
 ```
 
 ### Ref:
