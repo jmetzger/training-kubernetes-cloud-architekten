@@ -95,7 +95,7 @@ metadata:
     kubernetes.io/ingress.class: nginx 
 spec:
   rules:
-  - host: "app12.lab1.t3isp.de"
+  - host: "jochen.lab2.t3isp.de"
     http:
       paths:
         - path: /apple
