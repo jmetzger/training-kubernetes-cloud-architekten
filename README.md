@@ -55,6 +55,9 @@
      * [Überblick](/rechte/general.md)
      * [Beispiel User mit RBAC erstellen](kubernetes/rbac-create-user-multi.md)
 
+  1. Prometheus 
+     * [Prometheus/Grafana Überblick](/prometheus/overview.md)
+     * [Prometheus Installation / Walkthrough](/prometheus/walkthrough-installation-setup.md)
 
   1. Infrastructure as Code (IaC) 
      * Kubernetes Configuration Files 
