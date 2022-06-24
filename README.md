@@ -33,7 +33,7 @@
   1. Ingress 
      * [Übersicht Ingress](/kubernetes/ingress.md)
      * [Ingress Controller auf DigitalOcean aufsetzen](/digitalocean/ingress-controller-aufsetzen-mit-helm.md)
-     * [Übung/Beispiel Ingress]()
+     * [Übung/Beispiel Ingress](kubectl-examples/04-ingress-nginx-with-hostnames.md)
   
   1. Kubernetes Paketmanagement (Helm) 
      * [Warum ? (Dev/Ops)](/helm/warum.md)
