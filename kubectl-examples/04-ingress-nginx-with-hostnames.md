@@ -92,8 +92,10 @@ metadata:
     ingress.kubernetes.io/rewrite-target: /
     # with the ingress controller from helm, you need to set an annotation 
     # otherwice it does not know, which controller to use
-    kubernetes.io/ingress.class: nginx
+    # old version... use ingressClassName instead 
+    # kubernetes.io/ingress.class: nginx
 spec:
+  ingressClassName: nginx
   rules:
   - host: "jochen.lab2.t3isp.de"
     http:
@@ -144,9 +146,11 @@ metadata:
   annotations:
     ingress.kubernetes.io/rewrite-target: /
     # with the ingress controller from helm, you need to set an annotation 
+    # old version useClassName instead 
     # otherwice it does not know, which controller to use
-    kubernetes.io/ingress.class: nginx 
+    # kubernetes.io/ingress.class: nginx 
 spec:
+  ingressClassName: nginx
   rules:
   - host: "app12.lab.t3isp.de"
     http:
