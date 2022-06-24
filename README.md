@@ -64,6 +64,9 @@
      * Muss es immer Kubernetes sein?
      * Was ist Kuberentes und was ist OpenShift 
      * Function as a Service
+     
+  1. Tipps & Tricks 
+     * [alte Manifeste migrieren](kubectl/convert-plugin.md)
 
 ## Backlog 
   
