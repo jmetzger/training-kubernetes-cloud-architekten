@@ -2,7 +2,7 @@
 
 ## Why / Howto / Difference to LiveNess 
 
-  * Readiness checks, if container and if not
+  * Readiness checks, if container is ready and if not
     * SENDS NO TRAFFIC to the container   
   * They are configured exactly the same, but use another keyword
     * readinessProbe instead of livenessProbe 
