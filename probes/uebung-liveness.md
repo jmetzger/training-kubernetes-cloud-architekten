@@ -10,8 +10,8 @@ What does it do ?
 * Check will be done after 5 seconds of pod being startet
 * Check will be done periodically every 5 minutes and will check
   * for /tmp/healthy
-  * if not there will return: 0 
-  * if not there will return: 1 
+  * if file is there will return: 0 
+  * if file is not there will return: 1 
 * After 30 seconds container will be killed
 * After 35 seconds container will be restarted
 ```
